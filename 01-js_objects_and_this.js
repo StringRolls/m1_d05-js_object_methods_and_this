@@ -47,3 +47,57 @@ const abstractPerson = {
 console.log("abstractPerson", abstractPerson.tellAge())
 
 console.log(abstractPerson.tellAge.bind(person1)())
+
+
+// Example 2
+
+        // Global context: window
+        console.log('GLOBAL context:', this)
+
+
+        // Function context: window
+        function whatsMyContext() {
+            console.log('FUNCTION context:', this)
+        }
+        whatsMyContext()
+
+
+        const person = {
+            name: 'Marco',
+            weight: 80,
+            walk1() {
+                this.weight -= .1                               // Method context: self object
+                console.log('ANow I weight ', this.weight)
+            },
+            walk2() {
+                setInterval(function () {
+                    this.weight -= .1                           // OPS! function context is window
+                    console.log('Now I weight ', this.weight)
+                }, 1000)
+            },
+            walk3() {                                           // FORBIDDEN. 
+                const popino = this
+                setInterval(function () {
+                    popino.weight -= .1
+                    console.log('Now I weight ', popino.weight)
+                }, 1000)
+            },
+            walk4() {
+                setInterval(function () {                       // YAY! .bind() declares an specific context in a function
+                    this.weight -= .1
+                    console.log('Now I weight ', this.weight)
+                }.bind(this), 1000)
+            },
+            walk5() {
+                setInterval(() => {                             // YAY! Arrow functions are not seen by this
+                    this.weight -= .1
+                    console.log('Now I weight ', this.weight)
+                }, 1000)
+            },
+        }
+
+        person.walk1()
+        person.walk2()
+        person.walk3()
+        person.walk4()
+        person.walk5()
